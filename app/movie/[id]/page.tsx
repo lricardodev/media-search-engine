@@ -1,7 +1,8 @@
 import { getMovieDetail } from "@/lib/api/omdb";
 import { Button } from "@/components/atoms/Button";
 import Link from "next/link";
-import { MovieDetail } from "@/types";
+
+import { FavoriteButton } from "@/components/molecules/FavoriteButton";
 
 // This is a Server Component
 export default async function MovieDetailPage({
@@ -100,31 +101,5 @@ export default async function MovieDetailPage({
         </div>
       </div>
     </div>
-  );
-}
-
-// Client Component for Favorite Button
-import { useFavorites } from "@/hooks/useFavorites";
-
-function FavoriteButton({ movie }: { movie: MovieDetail }) {
-  "use client";
-  const { isFavorite, addFavorite, removeFavorite } = useFavorites();
-  const favorite = isFavorite(movie.imdbID);
-
-  const toggleFavorite = () => {
-    if (favorite) {
-      removeFavorite(movie.imdbID);
-    } else {
-      addFavorite(movie);
-    }
-  };
-
-  return (
-    <Button
-      onClick={toggleFavorite}
-      className={favorite ? "bg-red-100 text-red-600 hover:bg-red-200" : ""}
-    >
-      {favorite ? "Remove from Favorites" : "Add to Favorites"}
-    </Button>
   );
 }

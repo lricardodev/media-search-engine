@@ -1,5 +1,5 @@
 import { searchMovies } from "@/lib/api/omdb";
-import { MovieCardContainer } from "@/components/molecules/MovieCard/MovieCardContainer";
+import { SearchClient } from "@/components/organisms/SearchClient";
 import { SearchBar } from "@/components/molecules/SearchBar";
 import { Button } from "@/components/atoms/Button";
 import Link from "next/link";
@@ -8,16 +8,33 @@ import Link from "next/link";
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; page?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    page?: string;
+    y?: string;
+    type?: string;
+  }>;
 }) {
   const params = await searchParams;
   const query = params.q || "";
   const page = parseInt(params.page || "1", 10);
+  const year = params.y;
+  const type = params.type;
 
-  const data = await searchMovies(query, page);
+  const data = await searchMovies(query, page, type, year);
   const movies = data.Search || [];
   const totalResults = parseInt(data.totalResults || "0", 10);
   const totalPages = Math.ceil(totalResults / 10);
+
+  // Helper to build pagination URL
+  const buildPageUrl = (newPage: number) => {
+    const urlParams = new URLSearchParams();
+    if (query) urlParams.set("q", query);
+    if (year) urlParams.set("y", year);
+    if (type) urlParams.set("type", type);
+    urlParams.set("page", newPage.toString());
+    return `/search?${urlParams.toString()}`;
+  };
 
   return (
     <div className="space-y-8">
@@ -26,7 +43,7 @@ export default async function SearchPage({
         {query && (
           <p className="text-gray-600">
             Found {totalResults} results for{" "}
-            <span className="font-semibold">"{query}"</span>
+            <span className="font-semibold">&quot;{query}&quot;</span>
           </p>
         )}
       </div>
@@ -37,15 +54,11 @@ export default async function SearchPage({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {movies.map((movie) => (
-              <MovieCardContainer key={movie.imdbID} movie={movie} />
-            ))}
-          </div>
+          <SearchClient initialMovies={movies} totalResults={totalResults} />
 
           {totalPages > 1 && (
             <div className="flex justify-center space-x-2 mt-8">
-              <Link href={`/search?q=${query}&page=${Math.max(1, page - 1)}`}>
+              <Link href={buildPageUrl(Math.max(1, page - 1))}>
                 <Button disabled={page <= 1} variant="secondary">
                   Previous
                 </Button>
@@ -53,12 +66,7 @@ export default async function SearchPage({
               <span className="flex items-center px-4 text-gray-600">
                 Page {page} of {totalPages}
               </span>
-              <Link
-                href={`/search?q=${query}&page=${Math.min(
-                  totalPages,
-                  page + 1
-                )}`}
-              >
+              <Link href={buildPageUrl(Math.min(totalPages, page + 1))}>
                 <Button disabled={page >= totalPages} variant="secondary">
                   Next
                 </Button>

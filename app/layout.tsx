@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Media Search Engine",
   description: "Search for your favorite movies and series",
   icons: {
-    icon: "/movie.png",
+    icon: "/ticketIcon.png",
   },
 };
 

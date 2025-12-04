@@ -10,7 +10,11 @@ export function useFavorites() {
         const storedFavorites = localStorage.getItem('favorites');
         if (storedFavorites) {
             try {
-                setFavorites(JSON.parse(storedFavorites));
+                const parsedFavorites = JSON.parse(storedFavorites);
+                // Use setTimeout to avoid synchronous state update warning during effect
+                setTimeout(() => {
+                    setFavorites(parsedFavorites);
+                }, 0);
             } catch (error) {
                 console.error('Error parsing favorites from localStorage:', error);
             }

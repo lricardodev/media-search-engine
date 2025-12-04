@@ -7,11 +7,12 @@ if (!API_KEY) {
     console.warn('OMDB_API_KEY is not defined in environment variables.');
 }
 
-export async function searchMovies(query: string, page: number = 1, type?: string): Promise<SearchResponse> {
+export async function searchMovies(query: string, page: number = 1, type?: string, year?: string): Promise<SearchResponse> {
     if (!query) return { Search: [], totalResults: '0', Response: 'False', Error: 'No query provided' };
 
     const typeParam = type ? `&type=${type}` : '';
-    const url = `${BASE_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}&page=${page}${typeParam}`;
+    const yearParam = year ? `&y=${year}` : '';
+    const url = `${BASE_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}&page=${page}${typeParam}${yearParam}`;
 
     try {
         const res = await fetch(url, {

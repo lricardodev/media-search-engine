@@ -93,7 +93,7 @@ export function SearchClient({
       {filteredMovies.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
           <p className="text-gray-500 text-lg">
-            No results match your filters.
+            No hay resultados que coincidan con tus filtros.
           </p>
           <button
             onClick={() => {
@@ -102,13 +102,13 @@ export function SearchClient({
             }}
             className="mt-2 text-blue-600 hover:underline"
           >
-            Clear filters
+            Limpiar filtros
           </button>
         </div>
       ) : (
         <>
           {view === "grid" ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
               {filteredMovies.map((movie) => (
                 <MovieCardContainer key={movie.imdbID} movie={movie} />
               ))}

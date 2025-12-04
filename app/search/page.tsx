@@ -17,14 +17,33 @@ export default async function SearchPage({
 }) {
   const params = await searchParams;
   const query = params.q || "";
-  const page = parseInt(params.page || "1", 10);
+  const uiPage = parseInt(params.page || "1", 10);
   const year = params.y;
   const type = params.type;
 
-  const data = await searchMovies(query, page, type, year);
-  const movies = data.Search || [];
-  const totalResults = parseInt(data.totalResults || "0", 10);
-  const totalPages = Math.ceil(totalResults / 10);
+  // Fetch 2 pages from OMDb to show 20 items per UI page
+  const apiPageStart = (uiPage - 1) * 2 + 1;
+
+  const [data1, data2] = await Promise.all([
+    searchMovies(query, apiPageStart, type, year),
+    searchMovies(query, apiPageStart + 1, type, year),
+  ]);
+
+  const movies = Array.from(
+    new Map(
+      [...(data1.Search || []), ...(data2.Search || [])].map((m) => [
+        m.imdbID,
+        m,
+      ])
+    ).values()
+  );
+
+  // Use totalResults from the first valid response
+  const totalResults = parseInt(
+    data1.totalResults || data2.totalResults || "0",
+    10
+  );
+  const totalPages = Math.ceil(totalResults / 20);
 
   // Helper to build pagination URL
   const buildPageUrl = (newPage: number) => {
@@ -42,15 +61,17 @@ export default async function SearchPage({
         <SearchBar />
         {query && (
           <p className="text-gray-600">
-            Found {totalResults} results for{" "}
+            Se encontraron {totalResults} resultados para{" "}
             <span className="font-semibold">&quot;{query}&quot;</span>
           </p>
         )}
       </div>
 
-      {data.Error ? (
+      {data1.Error &&
+      data1.Error !== "Movie not found!" &&
+      data1.Error !== "Series not found!" ? (
         <div className="text-center py-12">
-          <p className="text-red-500 text-lg">{data.Error}</p>
+          <p className="text-red-500 text-lg">{data1.Error}</p>
         </div>
       ) : (
         <>
@@ -58,17 +79,17 @@ export default async function SearchPage({
 
           {totalPages > 1 && (
             <div className="flex justify-center space-x-2 mt-8">
-              <Link href={buildPageUrl(Math.max(1, page - 1))}>
-                <Button disabled={page <= 1} variant="secondary">
-                  Previous
+              <Link href={buildPageUrl(Math.max(1, uiPage - 1))}>
+                <Button disabled={uiPage <= 1} variant="secondary">
+                  Anterior
                 </Button>
               </Link>
               <span className="flex items-center px-4 text-gray-600">
-                Page {page} of {totalPages}
+                Página {uiPage} de {totalPages}
               </span>
-              <Link href={buildPageUrl(Math.min(totalPages, page + 1))}>
-                <Button disabled={page >= totalPages} variant="secondary">
-                  Next
+              <Link href={buildPageUrl(Math.min(totalPages, uiPage + 1))}>
+                <Button disabled={uiPage >= totalPages} variant="secondary">
+                  Siguiente
                 </Button>
               </Link>
             </div>

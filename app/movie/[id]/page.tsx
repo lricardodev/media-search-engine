@@ -1,7 +1,15 @@
-import { getMovieDetail, getRecommendations } from "@/lib/api/omdb";
-import { getMovieTrailer } from "@/lib/api/youtube";
-import { Button } from "@/components/atoms/Button";
+import { SafeImage } from "@/components/atoms/SafeImage";
+import {
+  getMovieDetail,
+  getRecommendations,
+  getOmdbDetailUrl,
+  getOmdbSearchUrl,
+} from "@/lib/api/omdb";
+import { getMovieTrailer, getYoutubeTrailerUrl } from "@/lib/api/youtube";
+import { MovieCardContainer } from "@/components/molecules/MovieCard/MovieCardContainer";
+import { DebugPanel } from "@/components/molecules/DebugPanel";
 import Link from "next/link";
+import { Button } from "@/components/atoms/Button";
 import { FavoriteButton } from "@/components/molecules/FavoriteButton";
 import {
   Star,
@@ -14,14 +22,23 @@ import {
   Video,
 } from "lucide-react";
 
+// Helper to measure latency
+const fetchWithTiming = async <T,>(fn: () => Promise<T>) => {
+  const start = Date.now();
+  const data = await fn();
+  const end = Date.now();
+  return { data, latency: end - start };
+};
+
 // This is a Server Component
 export default async function MovieDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
-}) {
+}): Promise<React.JSX.Element> {
   const { id } = await params;
-  const movie = await getMovieDetail(id);
+  const movieResult = await fetchWithTiming(() => getMovieDetail(id));
+  const movie = movieResult.data;
 
   if (!movie) {
     return (
@@ -40,33 +57,61 @@ export default async function MovieDetailPage({
   }
 
   // Fetch recommendations based on the primary genre
-  const recommendations = await getRecommendations(movie.Genre);
+  const recommendationsResult = await fetchWithTiming(() =>
+    getRecommendations(movie.Genre)
+  );
+  const recommendations = recommendationsResult.data;
 
   // Get high-res poster by replacing SX300 with SX1000 or removing the size limit
   const highResPoster =
     movie.Poster !== "N/A" ? movie.Poster.replace("SX300", "SX1000") : null;
 
   // Fetch trailer from YouTube API
-  const trailerVideoId = await getMovieTrailer(movie.Title);
+  const trailerResult = await fetchWithTiming(() =>
+    getMovieTrailer(movie.Title)
+  );
+  const trailerVideoId = trailerResult.data;
+
+  // Prepare Debug Entries
+  const debugEntries = [
+    {
+      source: "OMDb Detail",
+      url: getOmdbDetailUrl(id),
+      latency: movieResult.latency,
+      response: movie,
+    },
+    {
+      source: "OMDb Recommendations",
+      url: getOmdbSearchUrl(movie.Genre.split(",")[0].trim(), 1, "movie"),
+      latency: recommendationsResult.latency,
+      response: recommendations,
+    },
+    {
+      source: "YouTube Trailer",
+      url: getYoutubeTrailerUrl(movie.Title),
+      latency: trailerResult.latency,
+      response: trailerVideoId
+        ? { videoId: trailerVideoId }
+        : "No trailer found",
+    },
+  ];
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-gray-900 text-white">
+      <DebugPanel entries={debugEntries} />
       {/* Main Detail Card */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="md:flex">
           {/* Poster Column */}
-          <div className="md:flex-shrink-0 md:w-1/3 lg:w-1/4 bg-gray-900 flex items-center justify-center">
-            {highResPoster ? (
-              <img
-                className="w-full h-full object-cover"
-                src={highResPoster}
-                alt={movie.Title}
-              />
-            ) : (
-              <div className="h-96 w-full flex items-center justify-center text-gray-500 bg-gray-200">
-                <Film className="w-16 h-16 opacity-50" />
-              </div>
-            )}
+          <div className="md:flex-shrink-0 md:w-1/3 lg:w-1/4 bg-gray-900 flex items-center justify-center relative min-h-[400px] md:min-h-full">
+            <SafeImage
+              src={highResPoster || movie.Poster}
+              alt={movie.Title}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover"
+            />
           </div>
 
           {/* Content Column */}
@@ -216,18 +261,15 @@ export default async function MovieDetailPage({
                   href={`/movie/${rec.imdbID}`}
                   className="group"
                 >
-                  <div className="aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 mb-2 shadow-sm group-hover:shadow-md transition-shadow">
-                    {rec.Poster !== "N/A" ? (
-                      <img
-                        src={rec.Poster}
-                        alt={rec.Title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <Film className="w-8 h-8" />
-                      </div>
-                    )}
+                  <div className="aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 mb-2 shadow-sm group-hover:shadow-md transition-shadow relative">
+                    <SafeImage
+                      src={rec.Poster}
+                      alt={rec.Title}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
                   </div>
                   <h4 className="font-medium text-gray-900 text-sm line-clamp-2 group-hover:text-blue-600 transition-colors">
                     {rec.Title}

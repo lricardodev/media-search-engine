@@ -29,13 +29,13 @@ export default function FavoritesPage() {
           </svg>
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          No favorites yet
+          Aún no tienes favoritos
         </h2>
         <p className="text-gray-600 mb-6">
-          Start searching and add movies to your collection.
+          Comienza a buscar y agrega películas a tu colección.
         </p>
         <Link href="/">
-          <Button>Start Searching</Button>
+          <Button>Comenzar a buscar</Button>
         </Link>
       </div>
     );
@@ -43,7 +43,7 @@ export default function FavoritesPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">My Favorites</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Mis Favoritos</h1>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {favorites.map((movie) => (
           <MovieCard

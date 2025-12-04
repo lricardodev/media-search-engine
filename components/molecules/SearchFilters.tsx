@@ -83,7 +83,7 @@ export function SearchFilters({
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Filtros</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onViewChange("grid")}
@@ -113,7 +113,7 @@ export function SearchFilters({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Year Filter (Server-side) */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">Year</label>
+          <label className="text-sm font-medium text-gray-700">Año</label>
           <input
             type="number"
             placeholder="e.g. 2023"
@@ -125,28 +125,28 @@ export function SearchFilters({
 
         {/* Type Filter (Server-side) */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">Type</label>
+          <label className="text-sm font-medium text-gray-700">Tipo</label>
           <select
             value={type}
             onChange={(e) => handleTypeChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">All Types</option>
-            <option value="movie">Movie</option>
-            <option value="series">Series</option>
-            <option value="episode">Episode</option>
+            <option value="">Todo</option>
+            <option value="movie">Película</option>
+            <option value="series">Serie</option>
+            <option value="episode">Episodio</option>
           </select>
         </div>
 
         {/* Genre Filter (Client-side) */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">Genre</label>
+          <label className="text-sm font-medium text-gray-700"> Género</label>
           <select
             value={genre}
             onChange={(e) => handleGenreChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">All Genres</option>
+            <option value="">Todo</option>
             {availableGenres.map((g) => (
               <option key={g} value={g}>
                 {g}
@@ -158,14 +158,14 @@ export function SearchFilters({
         {/* Rating Filter (Client-side) */}
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">
-            Min Rating
+            Minimo Rating
           </label>
           <select
             value={rating}
             onChange={(e) => handleRatingChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Any Rating</option>
+            <option value="">Todo</option>
             <option value="9">9+ ⭐⭐⭐⭐⭐</option>
             <option value="8">8+ ⭐⭐⭐⭐</option>
             <option value="7">7+ ⭐⭐⭐</option>
@@ -182,7 +182,7 @@ export function SearchFilters({
             onClick={clearFilters}
             className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
           >
-            <X size={16} /> Clear Filters
+            <X size={16} /> Limpiar Filtros
           </Button>
         </div>
       )}

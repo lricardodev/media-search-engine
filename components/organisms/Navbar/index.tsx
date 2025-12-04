@@ -9,7 +9,7 @@ export const Navbar: React.FC = () => {
           <div className="flex">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <span className="text-2xl font-bold text-blue-600">
-                MediaSearch
+                Search Movie/series(HACKATHON)
               </span>
             </Link>
           </div>
@@ -18,13 +18,13 @@ export const Navbar: React.FC = () => {
               href="/"
               className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Home
+              Inicio
             </Link>
             <Link
               href="/favorites"
               className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Favorites
+              Favoritos
             </Link>
           </div>
         </div>

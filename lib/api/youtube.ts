@@ -10,6 +10,7 @@ export async function getMovieTrailer(movieTitle: string): Promise<string | null
     const query = `${movieTitle} Official Trailer`;
     const url = `${BASE_URL}?part=snippet&q=${encodeURIComponent(query)}&type=video&key=${API_KEY}&maxResults=1`;
 
+    // console.log(`[YouTube] Fetching trailer with URL: ${url}`);
     try {
         const res = await fetch(url, {
             next: { revalidate: 86400 } // Cache for 24 hours
@@ -21,6 +22,7 @@ export async function getMovieTrailer(movieTitle: string): Promise<string | null
         }
 
         const data = await res.json();
+        // console.log(`[YouTube] Trailer response for "${movieTitle}":`, data);
 
         if (data.items && data.items.length > 0) {
             return data.items[0].id.videoId;
@@ -31,4 +33,10 @@ export async function getMovieTrailer(movieTitle: string): Promise<string | null
         console.error('Error fetching movie trailer:', error);
         return null;
     }
+}
+
+export function getYoutubeTrailerUrl(movieTitle: string): string {
+    const query = `${movieTitle} Official Trailer`;
+    // Mask API Key for display
+    return `${BASE_URL}?part=snippet&q=${encodeURIComponent(query)}&type=video&key=*****&maxResults=1`;
 }

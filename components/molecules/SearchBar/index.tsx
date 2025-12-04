@@ -42,7 +42,7 @@ export const SearchBar: React.FC = () => {
         onClick={triggerSearch}
         className="px-6 h-12 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors shadow-lg"
       >
-        Search
+        Buscar
       </button>
     </div>
   );

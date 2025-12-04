@@ -14,6 +14,7 @@ export async function searchMovies(query: string, page: number = 1, type?: strin
     const yearParam = year ? `&y=${year}` : '';
     const url = `${BASE_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}&page=${page}${typeParam}${yearParam}`;
 
+    // console.log(`[OMDb] Searching movies with URL: ${url}`);
     try {
         const res = await fetch(url, {
             next: { revalidate: 3600 } // Cache for 1 hour
@@ -24,6 +25,7 @@ export async function searchMovies(query: string, page: number = 1, type?: strin
         }
 
         const data = await res.json();
+        // console.log(`[OMDb] Search response for "${query}":`, data);
         return data;
     } catch (error) {
         console.error('Error searching movies:', error);
@@ -36,6 +38,7 @@ export async function getMovieDetail(id: string): Promise<MovieDetail | null> {
 
     const url = `${BASE_URL}?apikey=${API_KEY}&i=${encodeURIComponent(id)}&plot=full`;
 
+    // console.log(`[OMDb] Fetching movie detail with URL: ${url}`);
     try {
         const res = await fetch(url, {
             next: { revalidate: 86400 } // Cache for 24 hours
@@ -46,6 +49,7 @@ export async function getMovieDetail(id: string): Promise<MovieDetail | null> {
         }
 
         const data = await res.json();
+        // console.log(`[OMDb] Movie detail response for "${id}":`, data);
 
         if (data.Response === 'False') {
             return null;
@@ -65,4 +69,16 @@ export async function getRecommendations(genre: string): Promise<SearchResponse>
     const primaryGenre = genre.split(',')[0].trim();
 
     return searchMovies(primaryGenre, 1, 'movie');
+}
+
+export function getOmdbSearchUrl(query: string, page: number = 1, type?: string, year?: string): string {
+    const typeParam = type ? `&type=${type}` : '';
+    const yearParam = year ? `&y=${year}` : '';
+    // Mask API Key for display
+    return `${BASE_URL}?apikey=*****&s=${encodeURIComponent(query)}&page=${page}${typeParam}${yearParam}`;
+}
+
+export function getOmdbDetailUrl(id: string): string {
+    // Mask API Key for display
+    return `${BASE_URL}?apikey=*****&i=${encodeURIComponent(id)}&plot=full`;
 }

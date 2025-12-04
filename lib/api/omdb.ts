@@ -57,3 +57,12 @@ export async function getMovieDetail(id: string): Promise<MovieDetail | null> {
         return null;
     }
 }
+
+export async function getRecommendations(genre: string): Promise<SearchResponse> {
+    if (!genre) return { Search: [], totalResults: '0', Response: 'False', Error: 'No genre provided' };
+
+    // Get the first genre from the list (e.g., "Action, Adventure" -> "Action")
+    const primaryGenre = genre.split(',')[0].trim();
+
+    return searchMovies(primaryGenre, 1, 'movie');
+}

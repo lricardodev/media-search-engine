@@ -20,12 +20,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     // Check for saved theme or system preference
     const savedTheme = localStorage.getItem("theme") as Theme;
     if (savedTheme) {
-      setTheme(savedTheme);
+      if (savedTheme !== theme) {
+        setTheme(savedTheme);
+      }
       document.documentElement.classList.toggle("dark", savedTheme === "dark");
     } else {
-      setTheme("dark");
+      // Default is dark
+      if (theme !== "dark") {
+        setTheme("dark");
+      }
       document.documentElement.classList.add("dark");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleTheme = () => {

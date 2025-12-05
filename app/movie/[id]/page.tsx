@@ -6,7 +6,7 @@ import {
   getOmdbSearchUrl,
 } from "@/lib/api/omdb";
 import { getMovieTrailer, getYoutubeTrailerUrl } from "@/lib/api/youtube";
-import { MovieCardContainer } from "@/components/molecules/MovieCard/MovieCardContainer";
+
 import { DebugPanel } from "@/components/molecules/DebugPanel";
 import Link from "next/link";
 import { Button } from "@/components/atoms/Button";

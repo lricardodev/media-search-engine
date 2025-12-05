@@ -7,7 +7,7 @@ interface DebugEntry {
   source: string;
   url: string;
   latency: number;
-  response: any;
+  response: unknown;
 }
 
 interface DebugPanelProps {

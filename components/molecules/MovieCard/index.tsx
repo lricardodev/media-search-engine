@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SafeImage } from "@/components/atoms/SafeImage";
 import { Movie } from "@/types";
-import { Heart, Play, Info } from "lucide-react";
+import { Heart, Info } from "lucide-react";
 import { Button } from "@/components/atoms/Button";
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Movie, MovieDetail } from "@/types";
-import { getMovieDetail } from "@/lib/api/omdb";
+
 import { SearchFilters } from "@/components/molecules/SearchFilters";
 import { MovieCardContainer } from "@/components/molecules/MovieCard/MovieCardContainer";
 import { MovieListItem } from "@/components/molecules/MovieListItem";

@@ -6,7 +6,7 @@ import { getMovieDetail } from "@/lib/api/omdb";
 import { SearchFilters } from "@/components/molecules/SearchFilters";
 import { MovieCardContainer } from "@/components/molecules/MovieCard/MovieCardContainer";
 import { MovieListItem } from "@/components/molecules/MovieListItem";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronDown, ChevronUp, Filter } from "lucide-react";
 
 interface SearchClientProps {
   initialMovies: Movie[];
@@ -23,6 +23,7 @@ export function SearchClient({
   const [genreFilter, setGenreFilter] = useState("");
   const [ratingFilter, setRatingFilter] = useState("");
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -85,13 +86,34 @@ export function SearchClient({
 
   return (
     <div className="space-y-6">
-      <SearchFilters
-        view={view}
-        onViewChange={setView}
-        onGenreChange={setGenreFilter}
-        onRatingChange={setRatingFilter}
-        availableGenres={availableGenres}
-      />
+      <div className="bg-white dark:bg-netflix-black rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <button
+          onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+        >
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <Filter className="w-5 h-5" />
+            Filtros y Opciones
+          </h2>
+          {isFiltersOpen ? (
+            <ChevronUp className="w-5 h-5 text-gray-500" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-gray-500" />
+          )}
+        </button>
+
+        {isFiltersOpen && (
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800 animate-in slide-in-from-top-2 duration-200">
+            <SearchFilters
+              view={view}
+              onViewChange={setView}
+              onGenreChange={setGenreFilter}
+              onRatingChange={setRatingFilter}
+              availableGenres={availableGenres}
+            />
+          </div>
+        )}
+      </div>
 
       {filteredMovies.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 dark:bg-netflix-dark-gray rounded-lg border border-dashed border-gray-300 dark:border-gray-700">

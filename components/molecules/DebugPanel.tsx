@@ -43,7 +43,7 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ entries }) => {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+    <div className="fixed bottom-4 right-4 z-50 hidden md:flex flex-col items-end gap-2">
       {showFeedback && (
         <div className="bg-green-900/90 text-green-100 px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm flex items-center gap-2 text-sm animate-in fade-in slide-in-from-bottom-2">
           <Check className="w-4 h-4" />

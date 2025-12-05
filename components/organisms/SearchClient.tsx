@@ -75,7 +75,10 @@ export function SearchClient({
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <Loader2 className="animate-spin text-blue-500" size={48} />
+        <Loader2
+          className="animate-spin text-blue-500 dark:text-brand-accent"
+          size={48}
+        />
       </div>
     );
   }
@@ -91,8 +94,8 @@ export function SearchClient({
       />
 
       {filteredMovies.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-          <p className="text-gray-500 text-lg">
+        <div className="text-center py-12 bg-gray-50 dark:bg-netflix-dark-gray rounded-lg border border-dashed border-gray-300 dark:border-gray-700">
+          <p className="text-gray-500 dark:text-gray-400 text-lg">
             No hay resultados que coincidan con tus filtros.
           </p>
           <button
@@ -100,7 +103,7 @@ export function SearchClient({
               setGenreFilter("");
               setRatingFilter("");
             }}
-            className="mt-2 text-blue-600 hover:underline"
+            className="mt-2 text-blue-600 dark:text-brand-accent hover:underline"
           >
             Limpiar filtros
           </button>

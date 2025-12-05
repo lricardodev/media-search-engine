@@ -56,46 +56,50 @@ export default async function SearchPage({
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col items-center space-y-4">
-        <SearchBar />
-        {query && (
-          <p className="text-gray-600">
-            Se encontraron {totalResults} resultados para{" "}
-            <span className="font-semibold">&quot;{query}&quot;</span>
-          </p>
+    <div className="min-h-screen bg-gray-50 dark:bg-netflix-black text-gray-900 dark:text-white transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 space-y-8">
+        <div className="flex flex-col items-center space-y-4">
+          <SearchBar />
+          {query && (
+            <p className="text-gray-600 dark:text-gray-400">
+              Se encontraron {totalResults} resultados para{" "}
+              <span className="font-semibold">&quot;{query}&quot;</span>
+            </p>
+          )}
+        </div>
+
+        {data1.Error &&
+        data1.Error !== "Movie not found!" &&
+        data1.Error !== "Series not found!" ? (
+          <div className="text-center py-12">
+            <p className="text-red-500 dark:text-red-400 text-lg">
+              {data1.Error}
+            </p>
+          </div>
+        ) : (
+          <>
+            <SearchClient initialMovies={movies} totalResults={totalResults} />
+
+            {totalPages > 1 && (
+              <div className="flex justify-center space-x-2 mt-8">
+                <Link href={buildPageUrl(Math.max(1, uiPage - 1))}>
+                  <Button disabled={uiPage <= 1} variant="secondary">
+                    Anterior
+                  </Button>
+                </Link>
+                <span className="flex items-center px-4 text-gray-600 dark:text-gray-400">
+                  Página {uiPage} de {totalPages}
+                </span>
+                <Link href={buildPageUrl(Math.min(totalPages, uiPage + 1))}>
+                  <Button disabled={uiPage >= totalPages} variant="secondary">
+                    Siguiente
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </>
         )}
       </div>
-
-      {data1.Error &&
-      data1.Error !== "Movie not found!" &&
-      data1.Error !== "Series not found!" ? (
-        <div className="text-center py-12">
-          <p className="text-red-500 text-lg">{data1.Error}</p>
-        </div>
-      ) : (
-        <>
-          <SearchClient initialMovies={movies} totalResults={totalResults} />
-
-          {totalPages > 1 && (
-            <div className="flex justify-center space-x-2 mt-8">
-              <Link href={buildPageUrl(Math.max(1, uiPage - 1))}>
-                <Button disabled={uiPage <= 1} variant="secondary">
-                  Anterior
-                </Button>
-              </Link>
-              <span className="flex items-center px-4 text-gray-600">
-                Página {uiPage} de {totalPages}
-              </span>
-              <Link href={buildPageUrl(Math.min(totalPages, uiPage + 1))}>
-                <Button disabled={uiPage >= totalPages} variant="secondary">
-                  Siguiente
-                </Button>
-              </Link>
-            </div>
-          )}
-        </>
-      )}
     </div>
   );
 }

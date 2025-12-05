@@ -2,10 +2,19 @@ import { SearchBar } from "@/components/molecules/SearchBar";
 import { searchMovies, getOmdbSearchUrl } from "@/lib/api/omdb";
 import { MovieCardContainer } from "@/components/molecules/MovieCard/MovieCardContainer";
 import { DebugPanel } from "@/components/molecules/DebugPanel";
+import { DeveloperBadge } from "@/components/molecules/DeveloperBadge";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { Clapperboard, Smile, Tv, Calendar } from "lucide-react";
+import {
+  Clapperboard,
+  Smile,
+  Tv,
+  Calendar,
+  Play,
+  Plus,
+  Info,
+} from "lucide-react";
 
 // Helper to measure latency
 const fetchWithTiming = async <T,>(fn: () => Promise<T>) => {
@@ -17,15 +26,19 @@ const fetchWithTiming = async <T,>(fn: () => Promise<T>) => {
 
 export default async function Home(): Promise<React.JSX.Element> {
   // Fetch some initial data for "Featured" and "Popular Series"
-  // Since OMDb doesn't have a trending endpoint, we'll search for popular keywords
-
-  const [featuredMovies1, featuredMovies2, popularSeries1, popularSeries2] =
-    await Promise.all([
-      fetchWithTiming(() => searchMovies("movie", 1, "movie")),
-      fetchWithTiming(() => searchMovies("movie", 2, "movie")),
-      fetchWithTiming(() => searchMovies("Star Wars", 1, "series")),
-      fetchWithTiming(() => searchMovies("Star Wars", 2, "series")),
-    ]);
+  const [
+    featuredMovies1,
+    featuredMovies2,
+    popularSeries1,
+    popularSeries2,
+    heroMovieResult,
+  ] = await Promise.all([
+    fetchWithTiming(() => searchMovies("movie", 1, "movie")),
+    fetchWithTiming(() => searchMovies("movie", 2, "movie")),
+    fetchWithTiming(() => searchMovies("Star Wars", 1, "series")),
+    fetchWithTiming(() => searchMovies("Star Wars", 2, "series")),
+    fetchWithTiming(() => searchMovies("zootopia 2", 1, "movie")),
+  ]);
 
   const featuredMoviesData1 = featuredMovies1.data;
   const featuredMoviesData2 = featuredMovies2.data;
@@ -48,6 +61,7 @@ export default async function Home(): Promise<React.JSX.Element> {
       ].map((series) => [series.imdbID, series])
     ).values()
   );
+
   // Prepare Debug Entries
   const debugEntries = [
     {
@@ -74,97 +88,134 @@ export default async function Home(): Promise<React.JSX.Element> {
       latency: popularSeries2.latency,
       response: popularSeriesData2,
     },
+    {
+      source: "OMDb Search (zootopia 2)",
+      url: getOmdbSearchUrl("zootopia 2", 1, "movie"),
+      latency: heroMovieResult.latency,
+      response: heroMovieResult.data,
+    },
   ];
 
+  // Featured Hero Movie (Simulated)
+  // Featured Hero Movie (Simulated)
+  const heroMovie = heroMovieResult.data.Search?.[0] || featuredMovies[0];
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white dark:bg-netflix-black transition-colors duration-300">
       <DebugPanel entries={debugEntries} />
+
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-900 to-black text-white py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-6xl font-extrabold mb-6 tracking-tight">
-            Encuentra tu Próximo <span className="text-blue-400">Favorito</span>
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-            Explora millones de películas y series. Descubre tramas,
-            calificaciones y guarda lo que más te gusta.
-          </p>
-          <div className="max-w-3xl mx-auto mb-12">
-            <Suspense fallback={<div>Loading search...</div>}>
-              <SearchBar />
-            </Suspense>
+      <section className="h-[85vh] w-full overflow-hidden">
+        <div className="absolute inset-0">
+          {heroMovie && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src="/heroNetflix.jpg"
+              alt="Hero Background"
+              className="w-full h-full object-cover object-top opacity-60 dark:opacity-40"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent dark:from-netflix-black dark:via-netflix-black/60 dark:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent dark:from-netflix-black dark:via-transparent" />
+          {/* Netflix-style Curved Bottom Border */}
+          <div className="absolute -bottom-1 left-0 right-0 h-16 z-20 overflow-hidden pointer-events-none">
+            <div className="absolute top-[50%] left-[-25%] w-[150%] h-[200%] rounded-[100%] border-t-4 border-green-500 shadow-[0_0_20px_rgba(57,255,20,0.4)] bg-transparent" />
           </div>
-          {/* Quick Filters */}
-          <div className="flex flex-wrap justify-center gap-4 text-sm font-medium">
-            <Link
-              href="/search?q=Action&type=movie"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-sm flex items-center gap-2"
-            >
-              <Clapperboard className="w-4 h-4" /> Acción
-            </Link>
-            <Link
-              href="/search?q=Comedy&type=movie"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-sm flex items-center gap-2"
-            >
-              <Smile className="w-4 h-4" /> Comedia
-            </Link>
-            <Link
-              href="/search?q=Drama&type=series"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-sm flex items-center gap-2"
-            >
-              <Tv className="w-4 h-4" /> Drama Series
-            </Link>
-            <Link
-              href="/search?q=2024&type=movie"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-sm flex items-center gap-2"
-            >
-              <Calendar className="w-4 h-4" /> Estrenos 2024
-            </Link>
+        </div>
+
+        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+          <div className="max-w-2xl space-y-6">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter text-white drop-shadow-lg">
+              {heroMovie ? heroMovie.Title : "Película Destacada"}
+            </h1>
+            <div className="flex items-center gap-4 text-lg font-medium text-gray-200">
+              <span className="text-brand-accent font-bold">
+                98% de Coincidencia
+              </span>
+              <span>{heroMovie?.Year}</span>
+              <span className="border border-gray-500 px-2 py-0.5 rounded text-sm">
+                HD
+              </span>
+            </div>
+            <p className="text-xl text-gray-300 line-clamp-3 drop-shadow-md">
+              Este proyecto es un buscador de películas. Descubre lo último y lo
+              mejor en entretenimiento. Sumérgete en historias que cautivan e
+              inspiran.
+              {/* Note: OMDb search results don't have plot, would need detailed fetch */}
+            </p>
+
+            <div className="flex flex-wrap gap-4 pt-4">
+              <Link
+                href={heroMovie ? `/movie/${heroMovie.imdbID}#trailer` : "#"}
+                className="flex items-center gap-2 px-8 py-3 bg-brand-accent text-white rounded hover:bg-brand-accent/90 transition-colors font-bold text-lg shadow-lg shadow-brand-accent/30"
+              >
+                <Play className="fill-current w-6 h-6" /> Trailer
+              </Link>
+              <Link
+                href={heroMovie ? `/movie/${heroMovie.imdbID}` : "#"}
+                className="flex items-center gap-2 px-8 py-3 bg-gray-200/80 dark:bg-gray-500/40 text-gray-900 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-500/60 transition-colors font-bold text-lg backdrop-blur-sm"
+              >
+                <Info className="w-6 h-6" /> Más Información
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Search Section */}
+      <section className="relative z-10 -mt-20 px-4 sm:px-6 lg:px-8 mb-12">
+        <div className="max-w-4xl mx-auto">
+          <Suspense fallback={<div>Cargando búsqueda...</div>}>
+            <SearchBar />
+          </Suspense>
+        </div>
+      </section>
+
       {/* Featured Movies Section */}
-      <section className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-end mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">
-            Películas Destacadas
+      <section className="max-w-7xl mx-auto pt-20 px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-end mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white hover:text-brand-accent transition-colors cursor-pointer">
+            Tendencias Ahora
           </h2>
           <Link
             href="/search?q=movie&type=movie"
-            className="text-blue-600 hover:text-blue-800 font-medium"
+            className="text-sm font-medium text-brand-accent hover:underline"
           >
-            Ver más &rarr;
+            Ver Todo
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {featuredMovies.map((movie) => (
-            <MovieCardContainer key={movie.imdbID} movie={movie} />
+            <div key={movie.imdbID} className="aspect-[2/3]">
+              <MovieCardContainer movie={movie} />
+            </div>
           ))}
         </div>
       </section>
 
       {/* Popular Series Section */}
-      <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-end mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Series Populares
-            </h2>
-            <Link
-              href="/search?q=Star Wars&type=series"
-              className="text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Ver más &rarr;
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {popularSeries.map((series) => (
-              <MovieCardContainer key={series.imdbID} movie={series} />
-            ))}
-          </div>
+      <section className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="flex justify-between items-end mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white hover:text-brand-accent transition-colors cursor-pointer">
+            Series Populares
+          </h2>
+          <Link
+            href="/search?q=Star Wars&type=series"
+            className="text-sm font-medium text-brand-accent hover:underline"
+          >
+            Ver Todo
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {popularSeries.map((series) => (
+            <div key={series.imdbID} className="aspect-[2/3]">
+              <MovieCardContainer movie={series} />
+            </div>
+          ))}
         </div>
       </section>
+      {/* Developer Badge */}
+      <DeveloperBadge />
     </div>
   );
 }

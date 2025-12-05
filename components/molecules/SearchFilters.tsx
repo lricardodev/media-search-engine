@@ -81,16 +81,18 @@ export function SearchFilters({
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
+    <div className="bg-white dark:bg-netflix-dark-gray p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold text-gray-900">Filtros</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          Filtros
+        </h2>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onViewChange("grid")}
             className={`p-2 rounded-md ${
               view === "grid"
-                ? "bg-blue-100 text-blue-600"
-                : "text-gray-500 hover:bg-gray-100"
+                ? "bg-blue-100 text-blue-600 dark:bg-brand-accent/20 dark:text-brand-accent"
+                : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
             }`}
             aria-label="Grid view"
           >
@@ -100,8 +102,8 @@ export function SearchFilters({
             onClick={() => onViewChange("list")}
             className={`p-2 rounded-md ${
               view === "list"
-                ? "bg-blue-100 text-blue-600"
-                : "text-gray-500 hover:bg-gray-100"
+                ? "bg-blue-100 text-blue-600 dark:bg-brand-accent/20 dark:text-brand-accent"
+                : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
             }`}
             aria-label="List view"
           >
@@ -113,23 +115,27 @@ export function SearchFilters({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Year Filter (Server-side) */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">Año</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Año
+          </label>
           <input
             type="number"
             placeholder="e.g. 2023"
             value={year}
             onChange={(e) => setYear(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-brand-accent bg-white dark:bg-black text-gray-900 dark:text-white"
           />
         </div>
 
         {/* Type Filter (Server-side) */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">Tipo</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Tipo
+          </label>
           <select
             value={type}
             onChange={(e) => handleTypeChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-brand-accent bg-white dark:bg-black text-gray-900 dark:text-white"
           >
             <option value="">Todo</option>
             <option value="movie">Película</option>
@@ -140,11 +146,14 @@ export function SearchFilters({
 
         {/* Genre Filter (Client-side) */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700"> Género</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {" "}
+            Género
+          </label>
           <select
             value={genre}
             onChange={(e) => handleGenreChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-brand-accent bg-white dark:bg-black text-gray-900 dark:text-white"
           >
             <option value="">Todo</option>
             {availableGenres.map((g) => (
@@ -157,13 +166,13 @@ export function SearchFilters({
 
         {/* Rating Filter (Client-side) */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">
-            Minimo Rating
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Calificación Mínima
           </label>
           <select
             value={rating}
             onChange={(e) => handleRatingChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-brand-accent bg-white dark:bg-black text-gray-900 dark:text-white"
           >
             <option value="">Todo</option>
             <option value="9">9+ ⭐⭐⭐⭐⭐</option>
@@ -180,7 +189,7 @@ export function SearchFilters({
           <Button
             variant="ghost"
             onClick={clearFilters}
-            className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 flex items-center gap-1"
           >
             <X size={16} /> Limpiar Filtros
           </Button>
